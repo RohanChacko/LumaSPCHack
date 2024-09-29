@@ -3,7 +3,14 @@ import requests
 
 def check_status(client, id):
     generation = client.generations.get(id)
-    return generation.state if generation.state == "completed" else None
+
+    if generation.state == "completed":
+        return generation.state
+    elif generation.state == "failed":
+        return False
+    else:
+        return None
+    return None
 
 def delete_video(client, id):
     client.generations.delete(id)
@@ -24,7 +31,6 @@ def download_video(client,id, save_path="./"):
     # Download from Luma API
     response = requests.get(url, stream=True)
 
-    file_name = os.path.join(save_path, 'video.mp4')
-    with open(file_name, 'wb') as file:
+    with open(save_path, 'wb') as file:
         file.write(response.content)
-    print(f"File downloaded as {file_name}")
+    print(f"File downloaded as {save_path}")
